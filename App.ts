@@ -5,6 +5,8 @@ import * as bodyParser from 'body-parser';
 const cors = require('cors');
 const https = require('https');
 import GooglePassport from './GooglePassport';
+import session from 'express-session';
+import { nanoid } from 'nanoid';
 
 import { UserModel } from './src/models/UserModel';
 import { RecipesModel } from './src/models/RecipesModel';
@@ -43,6 +45,7 @@ class App {
     this.express.use(bodyParser.json());
     this.express.use(bodyParser.urlencoded({ extended: false }));
     this.express.use(cors());
+    this.express.use(session({ secret: "tree hacks" }));
     this.express.use(passport.initialize());
     this.express.use(passport.session());
   }
@@ -54,6 +57,48 @@ class App {
     router.get('/', (req, res, next) => {
         res.send('Express + TypeScript Server');
     });
+
+    router.get(
+        "/login/federated/google",
+        passport.authenticate("google", {
+          scope: ["profile", "email"]
+        }),
+        (req, res) => {
+          res.send("Successful login");
+        }
+    );
+
+    router.get(
+        "/login/federated/google/callback",
+        (req, res, next) => {
+          req.session.save();
+          next();
+        },
+        passport.authenticate("google", {
+          failureRedirect: "/#/login"
+        }),
+        async (req, res) => {
+          console.log("Successful login");
+          console.log("req info - ", req.user);
+  
+        const googleProfile: any = JSON.parse(JSON.stringify(req.user));
+        let doesUserExist: any = await this.Users.doesUserExist(res, googleProfile.id);
+
+        if (!doesUserExist) {
+            console.log("User doesn't exist. Creating a new entry for this user in the DB");
+            let newUser: any = await this.Users.createUser(res, googleProfile);
+            console.log("New user created with ID: ", newUser);
+            //req.session["uuid"] = newUser as string; // Add type declaration for 'uuid'
+        } else {
+            console.log("User already exists, logging in...");
+            //req.session["uuid"] = doesUserExist.userID as string; // Add type declaration for 'uuid'
+        }
+        req.session.save();
+        console.log("Session info has been saved as follows - ", req.session);
+        res.redirect("/#/dashboard");
+        }
+      );
+  
 
     //
     // USER ROUTES
