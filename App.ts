@@ -5,6 +5,7 @@ import * as bodyParser from 'body-parser';
 
 import { UserModel } from './src/models/UserModel';
 import { RecipesModel } from './src/models/RecipesModel';
+import { PantryModel } from './src/models/PantryModel';}
 
 // Creates and configures an ExpressJS web server.
 class App {
@@ -12,6 +13,7 @@ class App {
   // ref to Express instance
   public Users: UserModel;
   public Recipes: RecipesModel;
+  public Pantry: PantryModel;
   
   public express: express.Application;
 
@@ -19,6 +21,7 @@ class App {
   constructor() {
     this.Users = new UserModel();
     this.Recipes = new RecipesModel();
+    this.Pantry = new PantryModel();
 
     this.express = express();
     this.middleware();
@@ -68,6 +71,22 @@ class App {
     router.post('/recipes', async (req, res) => {
         var details = req.body;
         const x = await this.Recipes.createRecipe(res, details);
+        return x;
+    })
+
+    //
+    // PANTRY ROUTES
+    //
+
+    router.post('/pantry', async (req, res) => {
+        var details = req.body;
+        const x = await this.Pantry.createPantry(res, details);
+        return x;
+    });
+
+    router.get('/pantry/:id', async (req, res) => {
+        const id = req.params.id;
+        const x = await this.Pantry.getPantryDetails(res, id);
         return x;
     })
 
