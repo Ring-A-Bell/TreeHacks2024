@@ -1,5 +1,5 @@
 import * as Mongoose from 'mongoose';
-import {DataAccess} from './../DataAccess';
+import {DataAccess} from '../../DataAccess';
 import {IUserModel} from '../interfaces/IUserModel';
 
 let mongooseConnection = DataAccess.mongooseConnection;
@@ -10,7 +10,7 @@ let mongooseObj = DataAccess.mongooseInstance;
 })
 
 class UserModel {
-    public schema: Mongoose.Schema;
+    public schema: Mongoose.Schema | undefined;
     public model: any;
 
     public constructor() {
@@ -23,14 +23,9 @@ class UserModel {
         this.schema = new Mongoose.Schema(
             {
                 authID: { type: String, required: true },
-                userID: { type: String, required: true }, 
-                name: String,
+                fname: String,
+                lname: String,
                 email: String,
-                premiumStatus: {
-                    type: String,
-                    required: true,
-                    default: "false"
-                },
                 profilePic: String
             }, { collection: 'user' }
         );

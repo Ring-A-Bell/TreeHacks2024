@@ -4,7 +4,7 @@ require('dotenv').config();
 class DataAccess {
     static mongooseInstance: any;
     static mongooseConnection: Mongoose.Connection;
-    static DB_CONNECTION_STRING:string = process.env.MONGODB_CONNECTION_STRING;
+    static DB_CONNECTION_STRING:string = process.env.MONGODB_CONNECTION_STRING || 'mongodb://localhost:27017/treehacks';
 
     
     constructor () {
