@@ -4,18 +4,21 @@ import * as url from 'url';
 import * as bodyParser from 'body-parser';
 
 import { UserModel } from './src/models/UserModel';
+import { RecipesModel } from './src/models/RecipesModel';
 
 // Creates and configures an ExpressJS web server.
 class App {
 
   // ref to Express instance
   public Users: UserModel;
+  public Recipes: RecipesModel;
   
   public express: express.Application;
 
   //Run configuration methods on the Express instance.
   constructor() {
     this.Users = new UserModel();
+    this.Recipes = new RecipesModel();
 
     this.express = express();
     this.middleware();
@@ -50,7 +53,28 @@ class App {
         var details = req.body;
         const x = await this.Users.createUser(res, details);
         return x;
+    });
+
+    //
+    // RECIPE ROUTES
+    //
+
+    router.get('/recipes/:id', async (req, res) => {
+        const id = req.params.id;
+        const x = await this.Recipes.getRecipeDetails(res, id);
+        return x;
+    });
+
+    router.post('/recipes', async (req, res) => {
+        var details = req.body;
+        const x = await this.Recipes.createRecipe(res, details);
+        return x;
     })
+
+
+    //
+    // ROUTES CONFIG
+    //
 
     this.express.use('/api', router);
 
