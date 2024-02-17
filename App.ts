@@ -5,7 +5,7 @@ import * as bodyParser from 'body-parser';
 
 import { UserModel } from './src/models/UserModel';
 import { RecipesModel } from './src/models/RecipesModel';
-import { PantryModel } from './src/models/PantryModel';}
+import { PantryModel } from './src/models/PantryModel';
 
 // Creates and configures an ExpressJS web server.
 class App {
