@@ -7,7 +7,7 @@ let mongooseObj = DataAccess.mongooseInstance;
 
 (async () => {
     mongooseConnection = await mongooseObj;
-})
+});
 
 class RecipesModel {
     public schema: Mongoose.Schema | undefined;
@@ -35,8 +35,9 @@ class RecipesModel {
 
     public async createRecipe(response: any, recipeDetails: any): Promise<any> {
         try {
-            var result = await this.model.create([recipeDetails]);
+            let result = await this.model.create([recipeDetails]);
             console.log("Entered this recipe into the DB -> '\n", result);
+            return result;
         } catch(err) {
             response.send("Error creating recipe: " + err);
         }

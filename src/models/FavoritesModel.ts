@@ -7,7 +7,7 @@ let mongooseObj = DataAccess.mongooseInstance;
 
 (async () => {
     mongooseConnection = await mongooseObj;
-})
+});
 
 class FavoritesModel {
     public schema: Mongoose.Schema | undefined;
@@ -33,8 +33,9 @@ class FavoritesModel {
 
     public async createFavorite(response: any, details: any): Promise<any> {
         try {
-            var result = await this.model.create([details]);
+            let result = await this.model.create([details]);
             console.log("Entered this favorite recipe into the DB -> '\n", result);
+            return result;
         } catch(err) {
             response.send("Error creating recipe: " + err);
         }

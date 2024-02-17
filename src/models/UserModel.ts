@@ -7,7 +7,7 @@ let mongooseObj = DataAccess.mongooseInstance;
 
 (async () => {
     mongooseConnection = await mongooseObj;
-})
+});
 
 class UserModel {
     public schema: Mongoose.Schema | undefined;
@@ -37,15 +37,16 @@ class UserModel {
 
     public async createUser(response: any, userDetails: any): Promise<any> {
         try {
-            var result = await this.model.create([userDetails]);
+            let result = await this.model.create([userDetails]);
             console.log("Entered this user into the DB -> '\n", result);
+            return result;
         } catch(err) {
             response.send("Error creating recipe: " + err);
         }
     }
 
     public async doesUserExist(response: any, authID: string): Promise<any> {
-        var query = this.model.findOne({authID: authID});
+        let query = this.model.findOne({authID: authID});
         try {
             const queryResult = await query.exec();
             if(queryResult) {
@@ -62,7 +63,7 @@ class UserModel {
     }
 
     public async getUserDetails(response: any, userID: string): Promise<any> {
-        var query = this.model.findOne({userID: userID});
+        let query = this.model.findOne({userID: userID});
         try {
             const queryResult = await query.exec();
             if(queryResult) {
