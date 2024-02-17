@@ -2,6 +2,8 @@ import * as path from 'path';
 import express from 'express';
 import * as url from 'url';
 import * as bodyParser from 'body-parser';
+const cors = require('cors');
+const https = require('https');
 
 import { UserModel } from './src/models/UserModel';
 import { RecipesModel } from './src/models/RecipesModel';
@@ -32,6 +34,7 @@ class App {
   private middleware(): void {
     this.express.use(bodyParser.json());
     this.express.use(bodyParser.urlencoded({ extended: false }));
+    this.express.use(cors());
   }
 
   // Configure API endpoints.
@@ -89,6 +92,13 @@ class App {
         const x = await this.Pantry.getPantryDetails(res, id);
         return x;
     })
+
+    router.put('/pantry/:id', async (req, res) => {
+        const id = req.params.id;
+        let details = req.body;
+        const x = await this.Pantry.updatePantry(res, id, details);
+        return x;
+    });
 
 
     //

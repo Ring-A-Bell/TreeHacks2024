@@ -7,7 +7,7 @@ let mongooseObj = DataAccess.mongooseInstance;
 
 (async () => {
     mongooseConnection = await mongooseObj;
-})
+});
 
 class PantryModel {
     public schema: Mongoose.Schema | undefined;
@@ -35,8 +35,9 @@ class PantryModel {
 
     public async createPantry(response: any, pantryDetails: any): Promise<any> {
         try {
-            var result = await this.model.create([pantryDetails]);
+            let result = await this.model.create([pantryDetails]);
             console.log("Entered this pantry into the DB -> '\n", result);
+            return result;
         } catch(err) {
             response.send("Error creating pantry: " + err);
         }
@@ -55,6 +56,16 @@ class PantryModel {
             }
         } catch(err) {
             response.send("Error retrieving pantry");
+        }
+    }
+
+    public async updatePantry(response: any, userID: string, consumables: [string]): Promise<any> {
+        try {
+            let result = this.model.updateOne({userID: userID}, {consumables: consumables});
+            console.log("Updated pantry -> '\n", result);
+            return result;
+        } catch(err) {
+            response.send("Error updating pantry: " + err);
         }
     }
 }
