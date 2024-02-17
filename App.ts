@@ -4,11 +4,13 @@ import * as url from 'url';
 import * as bodyParser from 'body-parser';
 const cors = require('cors');
 const https = require('https');
+import GooglePassport from './GooglePassport';
 
 import { UserModel } from './src/models/UserModel';
 import { RecipesModel } from './src/models/RecipesModel';
 import { PantryModel } from './src/models/PantryModel';
 import { ConsumableModel } from './src/models/ConsumableModel';
+import passport from 'passport';
 
 // Creates and configures an ExpressJS web server.
 class App {
@@ -20,6 +22,7 @@ class App {
   public Consumables: ConsumableModel;
   
   public express: express.Application;
+  public googlePassport: GooglePassport;
 
   //Run configuration methods on the Express instance.
   constructor() {
@@ -27,6 +30,8 @@ class App {
     this.Recipes = new RecipesModel();
     this.Pantry = new PantryModel();
     this.Consumables = new ConsumableModel();
+
+    this.googlePassport = new GooglePassport();
 
     this.express = express();
     this.middleware();
@@ -38,6 +43,8 @@ class App {
     this.express.use(bodyParser.json());
     this.express.use(bodyParser.urlencoded({ extended: false }));
     this.express.use(cors());
+    this.express.use(passport.initialize());
+    this.express.use(passport.session());
   }
 
   // Configure API endpoints.
