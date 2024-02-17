@@ -150,7 +150,7 @@ class App {
 
     router.put('/pantry/:id', async (req, res) => {
         const id = req.params.id;
-        let details = req.body;
+        let details = req.body.consumables;
         const x = await this.Pantry.updatePantry(res, id, details);
         return x;
     });
@@ -175,6 +175,13 @@ class App {
         var details = req.body;
         const x = await this.Consumables.createConsumable(res, details);
         return x;
+    });
+
+    //
+    // OPENAI ROUTES
+    //
+
+    router.post('/openai', async (req, res) => {
     });
 
 

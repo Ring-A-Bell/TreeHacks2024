@@ -24,7 +24,7 @@ class PantryModel {
             {
                 pantryID: String,
                 userID: String,
-                consumables: [String],
+                consumables: [{consumableID: String, quantity: Number, measurementUnit: String}],
             }, { collection: 'pantry' }
         );
     }
@@ -59,7 +59,7 @@ class PantryModel {
         }
     }
 
-    public async updatePantry(response: any, userID: string, consumables: [string]): Promise<any> {
+    public async updatePantry(response: any, userID: string, consumables: [any]): Promise<any> {
         try {
             let result = this.model.updateOne({userID: userID}, {consumables: consumables});
             console.log("Updated pantry -> '\n", result);
