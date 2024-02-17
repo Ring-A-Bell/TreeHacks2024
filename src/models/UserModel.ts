@@ -52,10 +52,10 @@ class UserModel {
             if(queryResult) {
                 console.log("Data has been collected ->");
                 console.log(queryResult);
-                return queryResult;
+                return true;
             } else {
                 console.log("No data found\n", queryResult);
-                return 0;
+                return false;
             }
         } catch(err) {
             response.send("Error retrieving recipe: " + err);
