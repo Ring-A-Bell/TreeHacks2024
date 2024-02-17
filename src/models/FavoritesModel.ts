@@ -1,6 +1,6 @@
 import * as Mongoose from 'mongoose';
 import { DataAccess } from '../../DataAccess';
-import { IFavoritesModel } from '../interfaces/IFavoritesModel';}
+import { IFavoritesModel } from '../interfaces/IFavoritesModel';
 
 let mongooseConnection = DataAccess.mongooseConnection;
 let mongooseObj = DataAccess.mongooseInstance;
