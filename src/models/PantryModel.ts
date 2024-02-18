@@ -74,9 +74,14 @@ class PantryModel {
         }
     }
 
-    public async updatePantry(response: any, userID: string, consumables: [any]): Promise<any> {
+    public async updatePantry(response: any, userID: string, consumables: any): Promise<any> {
         try {
-            let result = this.model.updateOne({userID: userID}, {consumables: consumables});
+            let search = await this.model.findOne({userID: userID});
+            console.log("Found pantry search -> '\n", search)
+            console.log("new consumables -> '\n", consumables)
+            const newRes = [...search.consumables, consumables.consumable];
+            console.log("newRes -> '\n", newRes)
+            let result = await this.model.updateOne({userID: userID}, {consumables: newRes});
             console.log("Updated pantry -> '\n", result);
             return result;
         } catch(err) {

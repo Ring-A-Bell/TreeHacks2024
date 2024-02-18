@@ -168,7 +168,7 @@ class App {
 
     router.put('/pantry/:id', async (req, res) => {
         const id = (req.session as any)["uuid"];
-        let details = req.body.consumables;
+        let details = req.body;
         const x = await this.Pantry.updatePantry(res, id, details);
         return x;
     });

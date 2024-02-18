@@ -7,7 +7,7 @@ export default function generateResponseTemplate(): string {
     const userPrompt = `When you generate a recipe, I want you to strictly follow this format in JSON - 
     {"RecipeName": "Enter the recipe name here",
     "Description": "Enter the recipe description here",
-    "Ingredients": [{"IngredientName": "Enter the ingredient name here", "quantity": "Enter the numeric quantity here", "measurementUnit": "Enter the measurement unit here"}],
+    "Ingredients": [{"ingredientName": "Enter the ingredient name here", "quantity": "Enter the numeric quantity here", "measurementUnit": "Enter the measurement unit here"}],
     "Instructions": ["Enter the instructions here"]}`;
 
     return userPrompt;
