@@ -35,9 +35,9 @@ class UserModel {
         this.model = mongooseConnection.model<IUserModel>("user", this.schema);
     }
 
-    public async createUser(response: any, userDetails: any): Promise<any> {
+    public async createUser(response: any, authID: string, fname: string, lname: string, email: string, profilePic: string): Promise<any> {
         try {
-            let result = await this.model.create([userDetails]);
+            let result = await this.model.create([{authID: authID, fname: fname, lname: lname, email: email, profilePic: profilePic}]);
             console.log("Entered this user into the DB -> '\n", result);
             return result;
         } catch(err) {

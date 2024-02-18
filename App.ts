@@ -13,6 +13,7 @@ import { RecipesModel } from './src/models/RecipesModel';
 import { PantryModel } from './src/models/PantryModel';
 import { ConsumableModel } from './src/models/ConsumableModel';
 import passport from 'passport';
+import OpenAIConnection from './src/openai/test_connection';
 
 // Creates and configures an ExpressJS web server.
 class App {
@@ -45,7 +46,7 @@ class App {
     this.express.use(bodyParser.json());
     this.express.use(bodyParser.urlencoded({ extended: false }));
     this.express.use(cors());
-    this.express.use(session({ secret: "tree hacks" }));
+    this.express.use(session({ secret: "tree_hacks" }));
     this.express.use(passport.initialize());
     this.express.use(passport.session());
   }
@@ -56,6 +57,16 @@ class App {
 
     router.get('/', (req, res, next) => {
         res.send('Express + TypeScript Server');
+    });
+
+    router.get("/login/active", (req, res) => {
+        if ((req.session as any)["uuid"]) {
+            console.log("Session ID: ", (req.session as any)["uuid"]);
+          res.send(true);
+        } else {
+        console.log("Session ID false: ", (req.session as any)["uuid"]);
+          res.send(null);
+        }
     });
 
     router.get(
@@ -86,15 +97,22 @@ class App {
 
         if (!doesUserExist) {
             console.log("User doesn't exist. Creating a new entry for this user in the DB");
-            let newUser: any = await this.Users.createUser(res, googleProfile);
+            let newUser: any = await this.Users.createUser(
+                res,
+                googleProfile.id,
+                googleProfile.name.givenName,
+                googleProfile.name.familyName,
+                googleProfile.emails[0].value,
+                googleProfile.photos[0].value
+            );
             console.log("New user created with ID: ", newUser);
-            //req.session["uuid"] = newUser as string; // Add type declaration for 'uuid'
+            (req.session as any)["uuid"] = newUser;
         } else {
             console.log("User already exists, logging in...");
-            //req.session["uuid"] = doesUserExist.userID as string; // Add type declaration for 'uuid'
+            (req.session as any)["uuid"] = googleProfile.id;
         }
         req.session.save();
-        console.log("Session info has been saved as follows - ", req.session);
+        console.log("Session ID: ", (req.session as any)["uuid"]);
         res.redirect("/#/dashboard");
         }
       );
@@ -105,16 +123,16 @@ class App {
     // 
 
     router.get('/users/:userID', (req, res) => {
-        const id = req.params.userID;
+        const id = (req.session as any)["uuid"];
         const x = this.Users.getUserDetails(res, id);
         return x;
     });
 
-    router.post('/users', async (req, res) => {
-        var details = req.body;
-        const x = await this.Users.createUser(res, details);
-        return x;
-    });
+    // router.post('/users', async (req, res) => {
+    //     var details = req.body;
+    //     const x = await this.Users.createUser(res, details);
+    //     return x;
+    // });
 
     //
     // RECIPE ROUTES
@@ -143,13 +161,13 @@ class App {
     });
 
     router.get('/pantry/:id', async (req, res) => {
-        const id = req.params.id;
+        const id = (req.session as any)["uuid"];
         const x = await this.Pantry.getPantryDetails(res, id);
         return x;
     })
 
     router.put('/pantry/:id', async (req, res) => {
-        const id = req.params.id;
+        const id = (req.session as any)["uuid"];
         let details = req.body.consumables;
         const x = await this.Pantry.updatePantry(res, id, details);
         return x;
@@ -182,6 +200,13 @@ class App {
     //
 
     router.post('/openai', async (req, res) => {
+        const mainIngredient = req.body;
+        const id = (req.session as any)["uuid"];
+        const pantryIngredients = await this.Pantry.getPantryDetailsLocal(res, id);
+        const connection = new OpenAIConnection();
+        const x = await connection.main(pantryIngredients?.consumables, mainIngredient);
+        console.log(x);
+        res.send(x);
     });
 
 
@@ -192,7 +217,7 @@ class App {
     this.express.use('/api', router);
 
     this.express.use('/images', express.static(__dirname+'/img'));
-    this.express.use('/', express.static(__dirname+'/pages'));
+    this.express.use('/', express.static("public"));
 
     }
 

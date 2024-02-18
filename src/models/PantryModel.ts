@@ -59,6 +59,21 @@ class PantryModel {
         }
     }
 
+    public async getPantryDetailsLocal(response: any, userID: string): Promise<any> {
+        let query = this.model.findOne({userID: userID});
+        try {
+            const queryResult = await query.exec();
+            if(queryResult) {
+                console.log("Pantry data is -> ");
+                return queryResult;
+            } else {
+                response.send("No data found for that ID");
+            }
+        } catch(err) {
+            response.send("Error retrieving pantry");
+        }
+    }
+
     public async updatePantry(response: any, userID: string, consumables: [any]): Promise<any> {
         try {
             let result = this.model.updateOne({userID: userID}, {consumables: consumables});
